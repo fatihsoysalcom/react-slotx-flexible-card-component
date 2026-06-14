@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>React Slotx Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- React and ReactDOM from CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX transformation in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- react-slotx library from CDN -->
+    <script src="https://unpkg.com/react-slotx@latest/dist/react-slotx.umd.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 320px;
+            background-color: white;
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f8f8;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .card-body {
+            padding: 15px;
+            min-height: 80px;
+        }
+        .card-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            background-color: #f8f8f8;
+            font-size: 0.9em;
+            color: #666;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        h2, h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        p {
+            margin-bottom: 0;
+            line-height: 1.5;
+            color: #555;
+        }
+        small {
+            display: block;
+            text-align: right;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Destructure Slot and SlotProvider from the global ReactSlotx object
+        const { Slot, SlotProvider } = ReactSlotx;
+
+        // Define a reusable Card component that uses slots for flexible content projection
+        function Card() {
+            return (
+                <div className="card">
+                    <div className="card-header">
+                        {/* Define a slot named 'title'. If no content is provided via SlotProvider, this default will render. */}
+                        <Slot name="title"><h2>Default Card Title</h2></Slot>
+                    </div>
+                    <div className="card-body">
+                        {/* Define a slot named 'content' for the main body of the card. */}
+                        <Slot name="content"><p>Default card content goes here. This is a fallback.</p></Slot>
+                    </div>
+                    <div className="card-footer">
+                        {/* Define a slot named 'footer' for supplementary information. */}
+                        <Slot name="footer"><small>Default footer information.</small></Slot>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App component that demonstrates using the Card with different slot contents
+        function App() {
+            return (
+                <>
+                    {/* Example 1: A Card instance with all slots explicitly provided */}
+                    <SlotProvider
+                        slots={{
+                            title: <h2>Custom Card Title 1</h2>,
+                            content: <p>This is the <strong>main content</strong> for Card 1, dynamically injected via <code>react-slotx</code>. It allows for highly flexible component usage.</p>,
+                            footer: <small>Updated: {new Date().toLocaleDateString()}</small>
+                        }}
+                    >
+                        <Card />
+                    </SlotProvider>
+
+                    {/* Example 2: Another Card instance with different content for its slots */}
+                    <SlotProvider
+                        slots={{
+                            title: <h3>A Shorter Title for Card 2</h3>,
+                            content: <p>Just a quick note for Card 2, demonstrating how easily content can change.</p>,
+                            footer: <small>Simple footer for Card 2.</small>
+                        }}
+                    >
+                        <Card />
+                    </SlotProvider>
+
+                    {/* Example 3: A Card instance where some slots are not provided, falling back to defaults */}
+                    <SlotProvider
+                        slots={{
+                            title: <h2>Card with Missing Slots</h2>
+                            // 'content' and 'footer' slots are intentionally not provided here
+                        }}
+                    >
+                        <Card />
+                    </SlotProvider>
+
+                    {/* Example 4: A Card instance with no SlotProvider, showing all default slot content */}
+                    <Card />
+                </>
+            );
+        }
+
+        // Render the App component into the root div
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
